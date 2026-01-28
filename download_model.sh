@@ -41,13 +41,14 @@ fi
 
 MODEL_DIR="/models/$REPO"
 
-# Check if model already exists
-if [ -d "$MODEL_DIR" ] && [ "$(ls -A $MODEL_DIR/*.gguf 2>/dev/null)" ]; then
+# Check if model already exists (including subfolders)
+EXISTING_GGUF=$(find "$MODEL_DIR" -name "*.gguf" -type f 2>/dev/null | head -1)
+if [ -n "$EXISTING_GGUF" ]; then
     echo "✅ Model already exists at $MODEL_DIR"
-    ls -lh "$MODEL_DIR"/*.gguf 2>/dev/null || true
+    find "$MODEL_DIR" -name "*.gguf" -type f -exec ls -lh {} \;
     
     # Export the model path for entrypoint
-    GGUF_FILE=$(find "$MODEL_DIR" -name "*.gguf" | head -1)
+    GGUF_FILE=$(find "$MODEL_DIR" -name "*.gguf" -type f | head -1)
     echo "MODEL_PATH=$GGUF_FILE" > /tmp/model_path.env
     exit 0
 fi
@@ -60,14 +61,14 @@ mkdir -p "$MODEL_DIR"
 # Download model files using Python directly (most reliable)
 if [ -n "$QUANT" ]; then
     # Download specific quantization pattern
-    echo "Looking for files matching: *${QUANT}*.gguf"
+    # Support both flat files and subfolders (e.g., unsloth repos use IQ1_S/*.gguf)
+    echo "Looking for files matching: *${QUANT}* (including subfolders)"
     python3 << PYEOF
 from huggingface_hub import snapshot_download
 snapshot_download(
     repo_id="$REPO",
-    allow_patterns=["*${QUANT}*.gguf"],
-    local_dir="$MODEL_DIR",
-    local_dir_use_symlinks=False
+    allow_patterns=["*${QUANT}*/*.gguf", "*${QUANT}*.gguf", "${QUANT}/*.gguf"],
+    local_dir="$MODEL_DIR"
 )
 PYEOF
 else
@@ -78,8 +79,7 @@ from huggingface_hub import snapshot_download
 snapshot_download(
     repo_id="$REPO",
     allow_patterns=["*.gguf"],
-    local_dir="$MODEL_DIR",
-    local_dir_use_symlinks=False
+    local_dir="$MODEL_DIR"
 )
 PYEOF
 fi
