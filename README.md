@@ -26,6 +26,7 @@ Replace `USERNAME` with your GitHub username.
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `MODEL` | Yes | - | HuggingFace model ID (see formats below) |
+| `HF_TOKEN` | No | - | HuggingFace token for gated models (Llama 3, etc.) |
 | `CTX_SIZE` | No | 4096 | Context window size |
 | `MAX_TOKENS` | No | 2048 | Max tokens to generate per request |
 | `PORT` | No | 8080 | Server port |

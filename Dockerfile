@@ -44,6 +44,7 @@ EXPOSE 8080
 # Default environment variables
 # Optimized for high throughput (16-32 concurrent requests)
 ENV MODEL="" \
+    HF_TOKEN="" \
     CTX_SIZE=4096 \
     MAX_TOKENS=2048 \
     PORT=8080 \

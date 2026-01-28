@@ -3,12 +3,19 @@
 # Download GGUF model from HuggingFace
 # Supports: owner/repo:quantization or owner/repo (auto-selects first GGUF)
 # Handles split GGUFs automatically
+# Supports HF_TOKEN for gated models (Llama 3, etc.)
 
 set -e
 
 echo "============================================"
 echo "  Downloading Model from HuggingFace"
 echo "============================================"
+
+# Set HuggingFace token if provided (for gated models)
+if [ -n "$HF_TOKEN" ]; then
+    echo "✅ HF_TOKEN detected - gated models supported"
+    export HUGGING_FACE_HUB_TOKEN="$HF_TOKEN"
+fi
 
 if [ -z "$MODEL" ]; then
     echo "❌ ERROR: MODEL environment variable is required"
