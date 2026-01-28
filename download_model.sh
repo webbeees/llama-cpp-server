@@ -50,18 +50,20 @@ echo "Downloading from HuggingFace..."
 
 mkdir -p "$MODEL_DIR"
 
-# Download model files
+# Download model files using Python module (more reliable than CLI)
+HF_CLI="python3 -m huggingface_hub.cli.main"
+
 if [ -n "$QUANT" ]; then
     # Download specific quantization pattern
     echo "Looking for files matching: *${QUANT}*.gguf"
-    huggingface-cli download "$REPO" \
+    $HF_CLI download "$REPO" \
         --include "*${QUANT}*.gguf" \
         --local-dir "$MODEL_DIR" \
         --local-dir-use-symlinks False
 else
     # Download all GGUF files (for split models or single file)
     echo "Downloading all GGUF files..."
-    huggingface-cli download "$REPO" \
+    $HF_CLI download "$REPO" \
         --include "*.gguf" \
         --local-dir "$MODEL_DIR" \
         --local-dir-use-symlinks False
