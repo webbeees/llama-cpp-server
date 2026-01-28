@@ -1,0 +1,9 @@
+# Ensure shell scripts have LF line endings (required for Linux/Docker)
+*.sh text eol=lf
+entrypoint.sh text eol=lf
+Dockerfile text eol=lf
+
+# Keep these as auto
+*.md text
+*.yml text
+*.yaml text
